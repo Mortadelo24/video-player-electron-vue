@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Card from './Card.vue';
+import apis from '../API/apis'
 
 const isFilePermission = ref(true)
 const isMoreThanOneFolder = ref(false)
 
 const addFolder = ()=>{
-  console.log("To Do")
+  apis.mainApp.addPath()
 }
 
 

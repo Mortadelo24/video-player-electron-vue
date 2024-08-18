@@ -1,12 +1,48 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import path from 'path';
-
+import fs from 'fs';
 
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+////
+const folders: string[] = [];
+const foldersPath = "./folders.json";
+const chargeFolders = () => {
+
+  try {
+    const foldersFromData = JSON.parse(fs.readFileSync(foldersPath, 'utf8'))
+    folders.push(...foldersFromData)
+  } catch (error) {
+    saveFolders()
+  }
+}
+const saveFolders = () => {
+  fs.writeFileSync(foldersPath, JSON.stringify(folders))
+}
+const addFolder = (path: string) => {
+  if (folders.includes(path)) {
+    return
+  }
+  folders.push(path)
+
+}
+
+ipcMain.on("addPath",  (event) => {
+  const paths =  dialog.showOpenDialogSync({
+    properties: ['openDirectory']
+  })
+  if(!paths) return
+
+  paths.forEach(path => addFolder(path))
+  saveFolders();
+  event.reply('foldersUpdated', folders);
+})
+ipcMain.on("getFolders",(event)=>{
+  event.reply('foldersUpdated', folders);
+})
 
 const createWindow = () => {
   // Create the browser window.
@@ -26,8 +62,13 @@ const createWindow = () => {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+
+  // charge data
+  chargeFolders();
+
+
+
+
 };
 
 // This method will be called when Electron has finished
@@ -54,3 +95,4 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
