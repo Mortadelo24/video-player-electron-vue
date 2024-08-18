@@ -7,8 +7,8 @@ interface Apis {
     testApi: TestApi
     mainApp: {
         // addPath: ()=>Promise<void>
-        addPath: ()=>string[],
-        getFolders: ()=>string[]
+        addPath: ()=>Promise<string[]>,
+        getFolders: ()=>Promise<string[]>
     }
 }
 

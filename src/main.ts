@@ -30,7 +30,7 @@ const addFolder = (path: string) => {
 
 }
 
-ipcMain.on("addPath",  (event) => {
+const addPathToFolder = () => {
   const paths =  dialog.showOpenDialogSync({
     properties: ['openDirectory']
   })
@@ -38,11 +38,21 @@ ipcMain.on("addPath",  (event) => {
 
   paths.forEach(path => addFolder(path))
   saveFolders();
-  event.reply('foldersUpdated', folders);
-})
+  return folders
+}
+
 ipcMain.on("getFolders",(event)=>{
   event.reply('foldersUpdated', folders);
 })
+const getFolders = ()=>{
+  return folders
+}
+
+ipcMain.handle('dialog:addPathToFolder', addPathToFolder)
+ipcMain.handle('getter:getFolders', getFolders)
+
+
+
 
 const createWindow = () => {
   // Create the browser window.

@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import Card from './Card.vue';
 import apis from '../API/apis'
 
 const isFilePermission = ref(true)
-const isMoreThanOneFolder = ref(false)
+const folderPaths = ref([] as string[])
 
-const addFolder = ()=>{
-  apis.mainApp.addPath()
+const addFolder = async()=>{
+  folderPaths.value.push(...await apis.mainApp.addPath())
+}
+
+onMounted(async()=>{
+  folderPaths.value.push(...await apis.mainApp.getFolders())
+})
+const getFolderNameFromPath = (path:string) =>{
+  const pathStructure = path.split("\\")
+  return pathStructure[pathStructure.length - 1]
 }
 
 
@@ -20,14 +28,10 @@ const addFolder = ()=>{
         <p class="font-sans text-xl">Video Player</p> <small class="font-mono text-xs">by Jose Miranda</small>
       </nav>
       <div class="px-4 py-6">
-        <div v-if="isFilePermission && isMoreThanOneFolder" class="flex flex-col gap-y-2">
+        <div v-if="isFilePermission && folderPaths.length > 0" class="flex flex-col gap-y-2">
           <p class="text-xl font-bold">Your Videos</p>
-            <div class="flex flex-wrap	 ">
-            <Card></Card>
-            <Card></Card>
-            <Card></Card>
-            <Card></Card>
-            <Card></Card>
+            <div class="flex flex-wrap">
+            <Card v-for="path in folderPaths" :title="getFolderNameFromPath(path)"></Card>
           </div>
 
         </div>

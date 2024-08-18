@@ -8,10 +8,6 @@ contextBridge.exposeInMainWorld('testApi', {
 })
 
 contextBridge.exposeInMainWorld('mainApp', {
-    addPath: () => ipcRenderer.send('addPath'),
-    getFolders: ()=> ipcRenderer.send('getFolders')
+    addPath: () => ipcRenderer.invoke('dialog:addPathToFolder'),
+    getFolders: ()=> ipcRenderer.invoke('getter:getFolders')
 })
-
-ipcRenderer.on('foldersUpdated', (_, folders) => {
-    console.log(folders); 
-});
