@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow} from 'electron';
 import path from 'path';
-import fs from 'fs';
+import {chargeFolders} from './backEnd/index';
 
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -8,49 +8,6 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 ////
-const folders: string[] = [];
-const foldersPath = "./folders.json";
-const chargeFolders = () => {
-
-  try {
-    const foldersFromData = JSON.parse(fs.readFileSync(foldersPath, 'utf8'))
-    folders.push(...foldersFromData)
-  } catch (error) {
-    saveFolders()
-  }
-}
-const saveFolders = () => {
-  fs.writeFileSync(foldersPath, JSON.stringify(folders))
-}
-const addFolder = (path: string) => {
-  if (folders.includes(path)) {
-    return
-  }
-  folders.push(path)
-
-}
-
-const addPathToFolder = () => {
-  const paths =  dialog.showOpenDialogSync({
-    properties: ['openDirectory']
-  })
-  if(!paths) return
-
-  paths.forEach(path => addFolder(path))
-  saveFolders();
-  return folders
-}
-
-ipcMain.on("getFolders",(event)=>{
-  event.reply('foldersUpdated', folders);
-})
-const getFolders = ()=>{
-  return folders
-}
-
-ipcMain.handle('dialog:addPathToFolder', addPathToFolder)
-ipcMain.handle('getter:getFolders', getFolders)
-
 
 
 
@@ -73,7 +30,7 @@ const createWindow = () => {
   }
 
 
-  // charge data
+  // chargeFloders
   chargeFolders();
 
 

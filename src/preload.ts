@@ -9,5 +9,6 @@ contextBridge.exposeInMainWorld('testApi', {
 
 contextBridge.exposeInMainWorld('mainApp', {
     addPath: () => ipcRenderer.invoke('dialog:addPathToFolder'),
-    getFolders: ()=> ipcRenderer.invoke('getter:getFolders')
+    getFolders: ()=> ipcRenderer.invoke('getter:getFolders'),
+    getFoldersContent: (path:string) => ipcRenderer.invoke('getter:getFolderContent', path)
 })

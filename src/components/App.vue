@@ -7,6 +7,7 @@ const isFilePermission = ref(true)
 const folderPaths = ref([] as string[])
 
 const addFolder = async()=>{
+  folderPaths.value.length = 0
   folderPaths.value.push(...await apis.mainApp.addPath())
 }
 
@@ -17,7 +18,9 @@ const getFolderNameFromPath = (path:string) =>{
   const pathStructure = path.split("\\")
   return pathStructure[pathStructure.length - 1]
 }
-
+const goToFolder =async(path:string)=>{
+  console.log( await  apis.mainApp.getFoldersContent(path))
+}
 
 </script>
 
@@ -30,8 +33,9 @@ const getFolderNameFromPath = (path:string) =>{
       <div class="px-4 py-6">
         <div v-if="isFilePermission && folderPaths.length > 0" class="flex flex-col gap-y-2">
           <p class="text-xl font-bold">Your Videos</p>
+          <button @click="addFolder()"  class="bg-emerald-300 px-4 py-2 " >Add Folder</button>
             <div class="flex flex-wrap">
-            <Card v-for="path in folderPaths" :title="getFolderNameFromPath(path)"></Card>
+            <Card v-for="path in folderPaths" :onclick="()=>{goToFolder(path)}"  :title="getFolderNameFromPath(path)"></Card>
           </div>
 
         </div>
@@ -39,7 +43,7 @@ const getFolderNameFromPath = (path:string) =>{
 
           <p class="text-xl font-bold">There is nothing here</p>
           <p class="text-sm font-mono">Please add a folder</p>
-          <button @click="addFolder()"  class="bg-emerald-300 px-4 py-2" webkitdirectory>Add Folder</button>
+          <button @click="addFolder()"  class="bg-emerald-300 px-4 py-2" >Add Folder</button>
         </div>
       </div>
 
