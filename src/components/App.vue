@@ -2,13 +2,18 @@
 import { onMounted, ref, computed } from 'vue'
 import Card from './Card.vue';
 import { apis, FileInfo } from '../API/apis';
+import { Buffer } from 'buffer';
+
 
 const isFilePermission = ref(true)
 const isPlayingVideo = ref(false)
 const folderLocalPath = ref([] as string[])
 const folderPaths = ref([] as string[])
+const playingVideoURL = ref("https://www.keytechinc.com/wp-content/uploads/2022/01/video-thumbnail.jpg")
+
 
 const files = ref([] as FileInfo[]);
+
 
 const addFolder = async()=>{
   const fPaths = await apis.mainApp.addPath()
@@ -44,9 +49,17 @@ const backFromFolder = ()=>{
   chargeCurrentFolderContent()
   
 }
-const playVideo = ()=>{
+const playVideo = (fileName: string)=>{
   isPlayingVideo.value = true
-  console.log(folderLocalPath)
+  playingVideoURL.value = getVideoURLFromPath(localPathToNormalPath(folderLocalPath.value)+"\\"+  fileName)
+
+}
+const getVideoURLFromPath = (path:string)=>{
+  return 'http://localhost:2509/getVideo/'+stringToBase64(path)
+}
+const stringToBase64 = (path: string)=>{
+  console.log(path)
+  return Buffer.from(path, "utf8").toString("base64")
 }
 </script>
 
@@ -68,7 +81,7 @@ const playVideo = ()=>{
             <Card v-else v-for="fileInfo in files" :onclick="()=>{
               if (fileInfo.isDirectory) goToFolder(fileInfo.name);
               else{
-                playVideo()
+                playVideo(fileInfo.name)
               }
               }"  :title="fileInfo.name"></Card>
 
@@ -83,7 +96,13 @@ const playVideo = ()=>{
         </div>
       </div>
       <div v-else>
-        playig video bro
+       {{ playingVideoURL }}
+       <button @click="isPlayingVideo = false"  class="bg-emerald-300 px-4 py-2 ">Back</button>
+
+        <video controls>
+          <source :src="playingVideoURL " type="video/mp4">
+
+</video>
       </div>
 
     </div>

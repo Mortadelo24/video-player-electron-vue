@@ -1,6 +1,10 @@
 import { app, BrowserWindow} from 'electron';
 import path from 'path';
 import {chargeFolders} from './backEnd/index';
+import express from 'express'
+import fs from 'fs';
+
+
 
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -32,6 +36,33 @@ const createWindow = () => {
 
   // chargeFloders
   chargeFolders();
+  // run http server
+
+  const httpServer = express();
+  const port = 2509;
+
+
+  httpServer.listen(port, () => {
+    console.log(`Servidor escuchando en el puerto ${port}`);
+  });
+  httpServer.get('/getVideo/:videoPath', (req, res) => {
+    
+    const pathFromUser = Buffer.from(req.params.videoPath, "base64").toString("utf8")
+    try {
+      
+      if (!fs.statSync(pathFromUser).isFile()){
+        throw Error()
+      }
+    } catch (err) {
+      res.status(400).send('The path does not lead to a file');
+    }
+     
+    res.setHeader('Content-Type', 'video/mp4');
+    const videoStream = fs.createReadStream(pathFromUser);
+
+    videoStream.pipe(res);
+    
+  })
 
 
 
