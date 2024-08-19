@@ -4,11 +4,19 @@ import Card from './Card.vue';
 import apis from '../API/apis'
 
 const isFilePermission = ref(true)
+const folderLocalPath = ref([] as string[])
 const folderPaths = ref([] as string[])
 
+const files = ref([] as string[])
+
 const addFolder = async()=>{
+  const fPaths = await apis.mainApp.addPath()
+  if (!fPaths) return 
   folderPaths.value.length = 0
-  folderPaths.value.push(...await apis.mainApp.addPath())
+  folderPaths.value.push(...fPaths)
+}
+const localPathToNormalPath = (listPath:string[])=>{
+  return listPath.join("\\")
 }
 
 onMounted(async()=>{
@@ -18,10 +26,32 @@ const getFolderNameFromPath = (path:string) =>{
   const pathStructure = path.split("\\")
   return pathStructure[pathStructure.length - 1]
 }
-const goToFolder =async(path:string)=>{
-  console.log( await  apis.mainApp.getFoldersContent(path))
+const getFileExtension = (file:string)=>{
+  const pathSections = file.split('.')
+  if (pathSections.length < 2){
+    return ""
+  }       
+
+  return pathSections[pathSections.length - 1]
 }
 
+const chargeCurrentFolderContent =async()=>{
+  if (folderLocalPath.value.length <1 ) return 
+  files.value.length = 0
+  const folders = await  apis.mainApp.getFoldersContent(localPathToNormalPath(folderLocalPath.value)) 
+  console.log(folders)
+  files.value.push(...folders)
+}
+const goToFolder =(path:string)=>{
+  folderLocalPath.value.push(path)
+ 
+  chargeCurrentFolderContent()
+}
+const backFromFolder = ()=>{
+  folderLocalPath.value.pop()  
+  chargeCurrentFolderContent()
+  
+}
 </script>
 
 <template>
@@ -33,9 +63,16 @@ const goToFolder =async(path:string)=>{
       <div class="px-4 py-6">
         <div v-if="isFilePermission && folderPaths.length > 0" class="flex flex-col gap-y-2">
           <p class="text-xl font-bold">Your Videos</p>
-          <button @click="addFolder()"  class="bg-emerald-300 px-4 py-2 " >Add Folder</button>
+          <p>{{ folderLocalPath }}</p>
+          <button v-if="folderLocalPath.length <1" @click="addFolder()"  class="bg-emerald-300 px-4 py-2 " >Add Folder</button>
+          <button @click="backFromFolder()" v-else class="bg-emerald-300 px-4 py-2 ">Back</button>
             <div class="flex flex-wrap">
-            <Card v-for="path in folderPaths" :onclick="()=>{goToFolder(path)}"  :title="getFolderNameFromPath(path)"></Card>
+            <Card v-if="folderLocalPath.length < 1" v-for="path in folderPaths" :onclick="()=>{goToFolder(path)}"  :title="getFolderNameFromPath(path)"></Card>
+            
+            <Card v-else v-for="name in files" :onclick="()=>{
+              if (getFileExtension(name) == '') goToFolder(name);
+              }"  :title="name"></Card>
+
           </div>
 
         </div>
