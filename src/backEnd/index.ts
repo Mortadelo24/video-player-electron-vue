@@ -1,6 +1,8 @@
 import fs, { Dirent } from 'fs';
 import { dialog, ipcMain } from 'electron';
 import pathModule from 'path'
+import {randomUUID} from 'crypto'
+
 
 const folders: string[] = [];
 const foldersPath = "./folders.json";
@@ -63,7 +65,8 @@ ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
     return {
       name:  pathModule.basename(pathItem) ,
       isDirectory: true,
-      path: pathItem 
+      path: pathItem,
+      uuid: randomUUID()
     }
   })
   const filteredDirents = fs.readdirSync(path, { withFileTypes: true, encoding: 'utf8' }).filter(dirent => {
@@ -74,7 +77,8 @@ ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
     return {
       name: dirent.name,
       isDirectory: dirent.isDirectory(),
-      path: null
+      path: null,
+      uuid: randomUUID()
     }
   })
 })

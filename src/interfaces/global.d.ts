@@ -1,7 +1,8 @@
 export interface FileInfo {
     isDirectory: boolean
     name: string
-    path: string | null
+    path: string | null,
+    uuid: string
 }
 
 export interface IpcService {

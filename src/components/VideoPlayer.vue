@@ -1,24 +1,13 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useGlobalStore } from '../store/globalStore';
+import {  ref } from 'vue';
 
+const videoElement = ref<null | Element>(null)  
 
-const globalStore = useGlobalStore()
-const { playingVideoURL } = storeToRefs(globalStore)
-
-const goBack = async () => {
-    playingVideoURL.value = null
-}
-
-
-
+const props = defineProps<{
+    src: string
+}>()
 </script>
 
 <template>
-    <button @click="goBack()" class="bg-emerald-300 px-4 py-2 ">Back</button>
-
-    VideoPlayer: {{ playingVideoURL }}
-    <video controls>
-        <source :src="playingVideoURL" type="video/mp4">
-    </video>
+    <video :src="props.src" ref="videoContainer" class="w-full h-96 rounded-lg shadow-lg mx-auto"  controls></video>
 </template>
