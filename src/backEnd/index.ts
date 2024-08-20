@@ -55,15 +55,21 @@ const addPathToFolder = () => {
   return folders
 }
 
-ipcMain.on("getFolders", (event) => {
-  event.reply('foldersUpdated', folders);
-})
+
 ipcMain.handle('dialog:addPathToFolder', addPathToFolder)
 ipcMain.handle('getter:getFolders', () => {
   return folders
 })
 
-ipcMain.handle('getter:getFolderContent', (event, path: string) => {
+ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
+  // Todo: change the way files are represented to consider folders and to be the same
+  if(!path) return folders.map((pathItem) =>{
+    return {
+      name:  pathModule.basename(pathItem) ,
+      isDirectory: true,
+      path: pathItem 
+    }
+  })
   const filteredDirents = fs.readdirSync(path, { withFileTypes: true, encoding: 'utf8' }).filter(dirent => {
     if (dirent.isDirectory()) return true
     return ['.mp4'].includes(pathModule.extname(dirent.name))
@@ -71,7 +77,8 @@ ipcMain.handle('getter:getFolderContent', (event, path: string) => {
   return filteredDirents.map((dirent) => {
     return {
       name: dirent.name,
-      isDirectory: dirent.isDirectory()
+      isDirectory: dirent.isDirectory(),
+      path: null
     }
   })
 })

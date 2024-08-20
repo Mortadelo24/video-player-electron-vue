@@ -21,8 +21,10 @@ const createWindow = () => {
     width: 800,
     height: 600,
     // maxWidth:1024,
+    
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+
     },
   });
 
@@ -46,8 +48,9 @@ const createWindow = () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
   });
   httpServer.get('/getVideo/:videoPath', (req, res) => {
-    
+    res.setHeader('Content-Type', 'video/mp4');
     const pathFromUser = Buffer.from(req.params.videoPath, "base64").toString("utf8")
+    console.log(pathFromUser)
     try {
       
       if (!fs.statSync(pathFromUser).isFile()){
@@ -57,7 +60,6 @@ const createWindow = () => {
       res.status(400).send('The path does not lead to a file');
     }
      
-    res.setHeader('Content-Type', 'video/mp4');
     const videoStream = fs.createReadStream(pathFromUser);
 
     videoStream.pipe(res);

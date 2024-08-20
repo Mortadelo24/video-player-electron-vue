@@ -6,6 +6,7 @@ interface TestApi{
 export interface FileInfo{
     isDirectory: boolean
     name: string
+    path: string | null
 }
 
 interface Apis {
@@ -14,7 +15,7 @@ interface Apis {
         // addPath: ()=>Promise<void>
         addPath: ()=>Promise<string[]>,
         getFolders: ()=>Promise<string[]>,
-        getFoldersContent: (path: string)=>Promise<FileInfo[]>
+        getFolderContent: (path?: string)=>Promise<FileInfo[]>
     }
 }
 
