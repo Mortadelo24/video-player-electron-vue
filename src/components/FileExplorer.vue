@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { useGlobalStore } from '../store/globalStore';
-import { FileInfo, IpcService } from '../interfaces/global';
+import { FileInfo } from '../interfaces/global';
 import { onMounted } from 'vue';
 import { Buffer } from 'buffer';
 import { storeToRefs } from 'pinia';
 import Card from './Card.vue'
+import ipcService from '../API/ipcService';
 const globalStore = useGlobalStore()
 const { localPath, filesOnCurrentLocalPath } = storeToRefs(globalStore)
-
-// ipcService
-const ipcService = (window as any).ipcService as IpcService
 
 onMounted(async () => {
     globalStore.updateFilesCurrentLocalPath(await ipcService.invoke('getter:getFolderContent'))

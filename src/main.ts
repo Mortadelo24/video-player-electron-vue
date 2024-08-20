@@ -1,6 +1,6 @@
-import { app, BrowserWindow} from 'electron';
+import { app, BrowserWindow } from 'electron';
 import path from 'path';
-import {chargeFolders} from './backEnd/index';
+import { chargeFolders } from './backEnd/index';
 import express from 'express'
 import fs from 'fs';
 
@@ -19,7 +19,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     // maxWidth:1024,
-    
+
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
 
@@ -46,21 +46,43 @@ const createWindow = () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
   });
   httpServer.get('/getVideo/:videoPath', (req, res) => {
-    res.setHeader('Content-Type', 'video/mp4');
-    const pathFromUser = Buffer.from(req.params.videoPath, "base64").toString("utf8")
-    try {
-      
-      if (!fs.statSync(pathFromUser).isFile()){
-        throw Error()
-      }
-    } catch (err) {
-      res.status(400).send('The path does not lead to a file');
-    }
-     
-    const videoStream = fs.createReadStream(pathFromUser);
+    const videoPath = Buffer.from(req.params.videoPath, "base64").toString("utf8")
+    const stat = fs.statSync(videoPath)
+    const range = req.headers.range;
+    const fileSize = stat.size
 
-    videoStream.pipe(res);
-    
+    if (!range) {
+      res.writeHead(200, {
+        'Content-Length': fileSize,
+        'Content-Type': 'video/mp4'
+      });
+      const readStream = fs.createReadStream(videoPath);
+      readStream.pipe(res);
+
+    } else {
+      const parts = range.replace(/bytes=/, "").split("-");
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+      if (start >= fileSize
+        || end >= fileSize || start > end) {
+        res.status(416).send('Requested range not satisfiable');
+        return;
+      }
+
+      const chunksize = (end - start) + 1;
+      res.writeHead(206, {
+        'Content-Range': 'bytes ' + start + '-' + end + '/' + fileSize,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': 'video/mp4'
+
+      });
+
+      const stream = fs.createReadStream(videoPath, { start, end });
+      stream.pipe(res);
+    }
+
   })
 
 
