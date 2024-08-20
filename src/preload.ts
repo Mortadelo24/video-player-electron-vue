@@ -12,3 +12,4 @@ contextBridge.exposeInMainWorld('mainApp', {
     getFolders: ()=> ipcRenderer.invoke('getter:getFolders'),
     getFoldersContent: (path:string) => ipcRenderer.invoke('getter:getFolderContent', path)
 })
+

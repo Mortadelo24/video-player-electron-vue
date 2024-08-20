@@ -48,7 +48,7 @@ const addPathToFolder = () => {
   const paths = dialog.showOpenDialogSync({
     properties: ['openDirectory']
   })
-  if (!paths) return
+  if (!paths) return folders
 
   paths.forEach(path => addFolder(path))
   saveFolders();
