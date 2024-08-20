@@ -11,8 +11,6 @@ import fs from 'fs';
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
-////
-
 
 
 const createWindow = () => {
@@ -50,7 +48,6 @@ const createWindow = () => {
   httpServer.get('/getVideo/:videoPath', (req, res) => {
     res.setHeader('Content-Type', 'video/mp4');
     const pathFromUser = Buffer.from(req.params.videoPath, "base64").toString("utf8")
-    console.log(pathFromUser)
     try {
       
       if (!fs.statSync(pathFromUser).isFile()){

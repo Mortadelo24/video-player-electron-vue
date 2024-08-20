@@ -57,10 +57,6 @@ const addPathToFolder = () => {
 
 
 ipcMain.handle('dialog:addPathToFolder', addPathToFolder)
-ipcMain.handle('getter:getFolders', () => {
-  return folders
-})
-
 ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
   // Todo: change the way files are represented to consider folders and to be the same
   if(!path) return folders.map((pathItem) =>{

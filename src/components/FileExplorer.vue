@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGlobalStore } from '../store/globalStore';
-import { apis, FileInfo } from '../API/apis';
+import { FileInfo, IpcService } from '../interfaces/global';
 import { onMounted } from 'vue';
 import { Buffer } from 'buffer';
 import { storeToRefs } from 'pinia';
@@ -8,22 +8,23 @@ import Card from './Card.vue'
 const globalStore = useGlobalStore()
 const { localPath, filesOnCurrentLocalPath } = storeToRefs(globalStore)
 
-
+// ipcService
+const ipcService = (window as any).ipcService as IpcService
 
 onMounted(async () => {
-    globalStore.updateFilesCurrentLocalPath(await apis.mainApp.getFolderContent())
+    globalStore.updateFilesCurrentLocalPath(await ipcService.invoke('getter:getFolderContent'))
 })
-
 const addPath = async () => {
-    const updatedPaths = await apis.mainApp.addPath()
+    await ipcService.invoke('dialog:addPathToFolder')
+    globalStore.updateFilesCurrentLocalPath(await ipcService.invoke('getter:getFolderContent'))
 }
 const goTo = async (fileInfo: FileInfo)=>{
     localPath.value.push(fileInfo)
-    globalStore.updateFilesCurrentLocalPath(await apis.mainApp.getFolderContent(globalStore.currentPath))
+    globalStore.updateFilesCurrentLocalPath(await ipcService.invoke('getter:getFolderContent', globalStore.currentPath))
 }
 const goBack = async()=>{
     localPath.value.pop()
-    globalStore.updateFilesCurrentLocalPath(await apis.mainApp.getFolderContent(globalStore.currentPath))
+    globalStore.updateFilesCurrentLocalPath(await ipcService.invoke('getter:getFolderContent', globalStore.currentPath))
 
 }
 const getVideoURL= (path: string)=>{

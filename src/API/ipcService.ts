@@ -1,9 +1,5 @@
 import { ipcRenderer } from 'electron';
-
-interface IpcService {
-  on(channel: string, listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void): void;
-  removeListener(channel: string, listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void): void;
-}
+import { IpcService } from 'src/interfaces/global';
 
 const ipcService: IpcService = {
   on(channel, listener) {
@@ -11,7 +7,12 @@ const ipcService: IpcService = {
   },
   removeListener(channel, listener) {
     ipcRenderer.removeListener(channel, listener);
+  },
+  invoke(channel, ...args){
+    return ipcRenderer.invoke(channel, ...args);
   }
+
+
 };
 
 export default ipcService;
