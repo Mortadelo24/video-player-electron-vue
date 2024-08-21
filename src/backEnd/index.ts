@@ -56,6 +56,9 @@ const addPathToFolder = () => {
   saveFolders();
   return folders
 }
+const getVideoURLFromPath = (path: string) => {
+  return 'http://localhost:2509/getVideo/' + Buffer.from(path, "utf8").toString("base64")
+}
 
 
 ipcMain.handle('dialog:addPathToFolder', addPathToFolder)
@@ -66,7 +69,8 @@ ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
       name:  pathModule.basename(pathItem) ,
       isDirectory: true,
       path: pathItem,
-      uuid: randomUUID()
+      uuid: randomUUID(),
+      videoURL: null
     }
   })
   const filteredDirents = fs.readdirSync(path, { withFileTypes: true, encoding: 'utf8' }).filter(dirent => {
@@ -78,7 +82,8 @@ ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
       name: dirent.name,
       isDirectory: dirent.isDirectory(),
       path: null,
-      uuid: randomUUID()
+      uuid: randomUUID(),
+      videoURL: getVideoURLFromPath(path +"\\"+ dirent.name),
     }
   })
 })

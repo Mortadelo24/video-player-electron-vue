@@ -2,7 +2,6 @@
 import { useGlobalStore } from '../store/globalStore';
 import { FileInfo } from '../interfaces/global';
 import { onMounted } from 'vue';
-import { Buffer } from 'buffer';
 import { storeToRefs } from 'pinia';
 import Card from './FileItem.vue'
 import FileExplorerNavBar from './FileExplorerNavBar.vue';
@@ -26,9 +25,7 @@ const goBack = async () => {
     globalStore.updateFilesCurrentLocalPath(await ipcService.invoke('getter:getFolderContent', globalStore.currentPath))
 
 }
-const getVideoURL = (path: string) => {
-    return 'http://localhost:2509/getVideo/' + Buffer.from(path, "utf8").toString("base64")
-}
+
 </script>
 
 <template>
@@ -40,8 +37,8 @@ const getVideoURL = (path: string) => {
         <button @click="goBack()" v-else class="bg-emerald-300 px-4 py-2 ">Back</button>
 
         <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  ">
-            <Card v-for="fileInfo in filesOnCurrentLocalPath"
-                :onclick="() => fileInfo.isDirectory ? goTo(fileInfo) : globalStore.playingVideoURL = getVideoURL(globalStore.currentPath + '\\' + fileInfo.name)"
+            <Card v-for="fileInfo in filesOnCurrentLocalPath" 
+                :onclick="() => fileInfo.isDirectory ? goTo(fileInfo) : globalStore.playingVideoURL = fileInfo.videoURL"
                 :title="fileInfo.name" :key="fileInfo.name" :isDirectory="fileInfo.isDirectory"></Card>
         </div>
 

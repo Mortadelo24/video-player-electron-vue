@@ -2,7 +2,8 @@ export interface FileInfo {
     isDirectory: boolean
     name: string
     path: string | null,
-    uuid: string
+    uuid: string,
+    videoURL: string | null
 }
 
 export interface IpcService {

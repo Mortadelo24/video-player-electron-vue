@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import VideoPlayer from './VideoPlayer.vue';
 
 const props  = defineProps<{
   title?: string
@@ -19,6 +20,7 @@ const imgSrc = ref(props.imgSrc || icons.directory)
 
 <div class=" rounded-lg cursor-pointer flex flex-col m-2 p-2  gap-2 hover:shadow-md">
     <img class="rounded-lg object-cover h-48 w-auto" :src="imgSrc" :alt="imgSrc" draggable="false">
+    <!-- <VideoPlayer ></VideoPlayer> -->
     <p class="text-base font-sans antialiased font-semibold max-h-24 overflow-hidden		truncate min-w-24 text-wrap">{{ title }}</p>
 </div>
 </template>
