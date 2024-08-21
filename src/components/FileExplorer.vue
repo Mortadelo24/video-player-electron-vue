@@ -22,8 +22,11 @@ const goTo = async (fileInfo: FileInfo) => {
 }
 const goBack = async () => {
     localPath.value.pop()
+
+
+
     globalStore.updateFilesCurrentLocalPath(await ipcService.invoke('getter:getFolderContent', globalStore.currentPath))
-    
+
 }
 
 </script>
@@ -31,15 +34,24 @@ const goBack = async () => {
 <template>
     <div class="flex flex-col px-4 py-6 gap-2">
         <p class="text-xl font-bold">Your Files</p>
-        <FileExplorerNavBar></FileExplorerNavBar>
-        <button v-if="localPath.length < 1" @click="addPath()" class="bg-emerald-300 px-4 py-2 ">Add
-            Folder</button>
-        <button @click="goBack()" v-else class="bg-emerald-300 px-4 py-2 ">Back</button>
+        <div class="flex gap-2">
+           
+            <button v-if="localPath.length < 1" @click="addPath()"
+                class="w-24	 py-3 px-3 hover:bg-gray-50 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg      inline-block whitespace-nowrap ">Add
+                Folder</button>
+            <button @click="goBack()" v-else
+                class=" w-24 py-3 px-3 hover:bg-gray-50 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg      inline-block whitespace-nowrap ">Back</button>
+                <FileExplorerNavBar></FileExplorerNavBar>
+        </div>
 
-        <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  ">
-            <Card v-for="fileInfo in filesOnCurrentLocalPath" 
+
+        <div  v-if="filesOnCurrentLocalPath.length > 0"  class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  place-content-center ">
+            <Card v-for="fileInfo in filesOnCurrentLocalPath" :videoURL="fileInfo.videoURL"
                 :onclick="() => fileInfo.isDirectory ? goTo(fileInfo) : globalStore.playingVideoURL = fileInfo.videoURL"
                 :title="fileInfo.name" :key="fileInfo.name" :isDirectory="fileInfo.isDirectory"></Card>
+        </div>
+        <div v-else>
+            <p class="font-bold	text-xl text-center mt-10">No Compatible files in this folder</p>
         </div>
 
     </div>

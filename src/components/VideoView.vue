@@ -15,9 +15,7 @@ const goBack = async () => {
 </script>
 
 <template>
-    <button @click="goBack()" class="bg-emerald-300 px-4 py-2 ">Back</button>
-
-    VideoPlayer: {{ playingVideoURL }}
+    <button @click="goBack()" class="w-24	 py-3 px-3 hover:bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg      inline-block whitespace-nowrap ">Back</button>
     <VideoPlayer :src="playingVideoURL"></VideoPlayer>
     
 </template>
