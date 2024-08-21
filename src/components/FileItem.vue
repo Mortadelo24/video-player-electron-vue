@@ -14,12 +14,15 @@ const icons = {
 const title = ref(props.title || "No Title")
 const imgSrc = ref(props.imgSrc || icons.directory)
 const video = ref<HTMLVideoElement | undefined>()
+const isVideoReady = ref(false)
 
 onMounted(() => {
-  if (video.value) {
+  if (video.value ) {
     video.value.addEventListener("loadedmetadata", () => {
       video.value.muted = true
       video.value.currentTime = 3
+      isVideoReady.value = true
+      
     })
   }
 })
@@ -29,7 +32,7 @@ onMounted(() => {
   <div class="  rounded-lg cursor-pointer flex flex-col m-2 p-2  gap-2 hover:shadow-md">
     <div class="aspect-[16/9] ">
       <video v-if="props.videoURL" ref="video" class="rounded-lg object-fill" :src="props.videoURL"></video>
-      <img v-else class="rounded-lg object-cover " :src="imgSrc" :alt="imgSrc" draggable="false">
+      <img v-else class="rounded-lg object-fill w-full" :src="imgSrc" :alt="imgSrc" draggable="false">
 
     </div>
 
