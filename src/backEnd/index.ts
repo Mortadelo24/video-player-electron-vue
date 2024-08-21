@@ -1,7 +1,7 @@
 import fs, { Dirent } from 'fs';
 import { dialog, ipcMain } from 'electron';
 import pathModule from 'path'
-import {randomUUID} from 'crypto'
+import { randomUUID } from 'crypto'
 
 
 const folders: string[] = [];
@@ -63,16 +63,47 @@ const getVideoURLFromPath = (path: string) => {
 
 ipcMain.handle('dialog:addPathToFolder', addPathToFolder)
 ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
-  // Todo: change the way files are represented to consider folders and to be the same
-  if(!path) return folders.map((pathItem) =>{
+  const filesPath: string[] = []
+  let isRootFolder = path? false: true
+
+  if (!path) filesPath.push(...folders)
+  else {
+    const filteredDirents = fs.readdirSync(path, { withFileTypes: true, encoding: 'utf8' }).filter(dirent => {
+      if (dirent.isDirectory()) return true
+      return ['.mp4'].includes(pathModule.extname(dirent.name))
+    });
+    filesPath.push(...filteredDirents.map((dirent)=>{
+      return pathModule.join(dirent.parentPath , dirent.name) 
+    }))
+
+  }
+
+  const mapedPaths = filesPath.map((pathItem)=>{
+    const elementStat = fs.statSync(pathItem)
     return {
-      name:  pathModule.basename(pathItem) ,
+      name: pathModule.basename(pathItem),
+      isDirectory: elementStat.isDirectory(),
+      path: isRootFolder? pathItem: null,
+      uuid: randomUUID(),
+      videoURL: elementStat.isFile()? getVideoURLFromPath(pathItem) : null
+    }
+  })
+  console.log(mapedPaths)
+  return mapedPaths
+
+
+  if (!path) return folders.map((pathItem) => {
+    return {
+      name: pathModule.basename(pathItem),
       isDirectory: true,
       path: pathItem,
       uuid: randomUUID(),
       videoURL: null
     }
   })
+  // todo: refactor all thi function
+  fs.statSync(path)
+
   const filteredDirents = fs.readdirSync(path, { withFileTypes: true, encoding: 'utf8' }).filter(dirent => {
     if (dirent.isDirectory()) return true
     return ['.mp4'].includes(pathModule.extname(dirent.name))
@@ -83,7 +114,7 @@ ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
       isDirectory: dirent.isDirectory(),
       path: null,
       uuid: randomUUID(),
-      videoURL: getVideoURLFromPath(path +"\\"+ dirent.name),
+      videoURL: getVideoURLFromPath(path + "\\" + dirent.name),
     }
   })
 })
