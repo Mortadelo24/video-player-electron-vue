@@ -29,7 +29,7 @@ onMounted(() => {
 </script>
 <template>
 
-  <div class="  rounded-lg cursor-pointer flex flex-col m-2 p-2  gap-2 hover:shadow-md">
+  <div class="rounded-lg cursor-pointer flex flex-col p-2		w-full  gap-2 hover:shadow-md">
     <div class="aspect-[16/9] ">
       <video v-if="props.videoURL" ref="video" class="rounded-lg object-fill" :src="props.videoURL"></video>
       <img v-else class="rounded-lg object-fill w-full" :src="imgSrc" :alt="imgSrc" draggable="false">

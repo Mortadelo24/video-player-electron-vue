@@ -32,7 +32,7 @@ const goBack = async () => {
 </script>
 
 <template>
-    <div class="flex flex-col px-4 pt-6 gap-2  max-h-full ">
+    <div class="flex flex-col px-4 pt-6 gap-6 h-full  max-h-full ">
         <p class="text-xl font-bold">Your Files</p>
         <div class="flex gap-2">
            
@@ -45,7 +45,7 @@ const goBack = async () => {
         </div>
 
 
-        <div  v-if="filesOnCurrentLocalPath.length > 0"  class="grid  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4   overflow-y-scroll ">
+        <div  v-if="filesOnCurrentLocalPath.length > 0"  class="grid  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 h-full   overflow-y-scroll justify-items-center content-start">
             <Card v-for="fileInfo in filesOnCurrentLocalPath" :videoURL="fileInfo.videoURL"
                 :onclick="() => fileInfo.isDirectory ? goTo(fileInfo) : globalStore.playingVideoURL = fileInfo.videoURL"
                 :title="fileInfo.name" :key="fileInfo.name" :isDirectory="fileInfo.isDirectory"></Card>
