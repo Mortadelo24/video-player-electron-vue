@@ -23,7 +23,7 @@ const goTo = async (fileInfo: FileInfo) => {
 const goBack = async () => {
     localPath.value.pop()
     globalStore.updateFilesCurrentLocalPath(await ipcService.invoke('getter:getFolderContent', globalStore.currentPath))
-
+    
 }
 
 </script>

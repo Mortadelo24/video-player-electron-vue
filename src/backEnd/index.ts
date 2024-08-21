@@ -4,7 +4,7 @@ import pathModule from 'path'
 import { randomUUID } from 'crypto'
 
 
-const folders: string[] = [];
+export const folders: string[] = [];
 const foldersPath = "./folders.json";
 export const chargeFolders = () => {
 
@@ -88,33 +88,5 @@ ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
       videoURL: elementStat.isFile()? getVideoURLFromPath(pathItem) : null
     }
   })
-  console.log(mapedPaths)
   return mapedPaths
-
-
-  if (!path) return folders.map((pathItem) => {
-    return {
-      name: pathModule.basename(pathItem),
-      isDirectory: true,
-      path: pathItem,
-      uuid: randomUUID(),
-      videoURL: null
-    }
-  })
-  // todo: refactor all thi function
-  fs.statSync(path)
-
-  const filteredDirents = fs.readdirSync(path, { withFileTypes: true, encoding: 'utf8' }).filter(dirent => {
-    if (dirent.isDirectory()) return true
-    return ['.mp4'].includes(pathModule.extname(dirent.name))
-  });
-  return filteredDirents.map((dirent) => {
-    return {
-      name: dirent.name,
-      isDirectory: dirent.isDirectory(),
-      path: null,
-      uuid: randomUUID(),
-      videoURL: getVideoURLFromPath(path + "\\" + dirent.name),
-    }
-  })
 })

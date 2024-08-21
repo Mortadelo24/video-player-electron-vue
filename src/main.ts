@@ -1,11 +1,26 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
-import { chargeFolders } from './backEnd/index';
+import { chargeFolders, folders } from './backEnd/index';
 import express from 'express'
 import fs from 'fs';
 
 
+function isPathInsideFolder(filePath:string, folderPath:string) {
+  const relative = path.relative(folderPath, filePath);
+  return !relative.startsWith('..') && !path.isAbsolute(relative);
+}
 
+const isFileInAllowedFolders = (filePath:string) =>{
+  let isAllawed = false
+  folders.forEach((folderPath:string)=>{
+    if (isPathInsideFolder(filePath, folderPath)){
+      
+      isAllawed =  true
+      return  
+    }
+  })
+  return isAllawed
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -48,6 +63,12 @@ const createWindow = () => {
   httpServer.get('/getVideo/:videoPath', (req, res) => {
     const videoPath = Buffer.from(req.params.videoPath, "base64").toString("utf8")
     const stat = fs.statSync(videoPath)
+
+    if ( !isFileInAllowedFolders(videoPath)){
+      return res.status(403).json({ message: 'Acces denied' }); 
+    }
+   
+
     const range = req.headers.range;
     const fileSize = stat.size
 
