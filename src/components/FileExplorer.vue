@@ -47,7 +47,7 @@ const goBack = async () => {
 
         <div  v-if="filesOnCurrentLocalPath.length > 0"  class="grid  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 h-full   overflow-y-scroll justify-items-center content-start">
             <Card v-for="fileInfo in filesOnCurrentLocalPath" :videoURL="fileInfo.videoURL"
-                :onclick="() => fileInfo.isDirectory ? goTo(fileInfo) : globalStore.playingVideoURL = fileInfo.videoURL"
+                :onclick="() => fileInfo.isDirectory ? goTo(fileInfo) : globalStore.currentVideoInfo = fileInfo"
                 :title="fileInfo.name" :key="fileInfo.name" :isDirectory="fileInfo.isDirectory"></Card>
         </div>
         <div v-else>

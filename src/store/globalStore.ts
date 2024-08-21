@@ -7,6 +7,8 @@ const useGlobalStore = defineStore("global", () => {
     const playingVideoURL = ref<string | null>(null);
     const localPath = ref([] as FileInfo[]);
     const filesOnCurrentLocalPath = ref([] as FileInfo[])
+    const currentVideoInfo = ref<FileInfo | null>(null)
+
 
     // computed
     const currentPath = computed(() => {
@@ -22,6 +24,7 @@ const useGlobalStore = defineStore("global", () => {
 
 
     // methods
+    
 
     const updateFilesCurrentLocalPath = (updatedFilesInfo: FileInfo[]) => {
         filesOnCurrentLocalPath.value = updatedFilesInfo
@@ -55,7 +58,8 @@ const useGlobalStore = defineStore("global", () => {
         localPath,
         filesOnCurrentLocalPath,
         currentPath,
-        returnToPath
+        returnToPath,
+        currentVideoInfo
 
     }
 })
