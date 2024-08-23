@@ -56,8 +56,14 @@ const addPathToFolder = () => {
   saveFolders();
   return folders
 }
-const getVideoURLFromPath = (path: string) => {
-  return 'http://localhost:2509/getVideo/' + Buffer.from(path, "utf8").toString("base64")
+const getVideoURLsFromPath = (path: string) => {
+  const host = "http://localhost:2509/"
+  const videoPathBase64 = Buffer.from(path, "utf8").toString("base64")
+
+  return {
+    previewImage: host + 'previewImage/' + videoPathBase64,
+    videoURL: host + 'video/' + videoPathBase64
+  }
 }
 
 
@@ -80,12 +86,14 @@ ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
 
   const mapedPaths = filesPath.map((pathItem)=>{
     const elementStat = fs.statSync(pathItem)
+    const videoURLs = getVideoURLsFromPath(pathItem)
     return {
       name: pathModule.basename(pathItem),
       isDirectory: elementStat.isDirectory(),
       path: isRootFolder? pathItem: null,
       uuid: randomUUID(),
-      videoURL: elementStat.isFile()? getVideoURLFromPath(pathItem) : null
+      videoURL: elementStat.isFile()? videoURLs.videoURL : null,
+      previewImage: elementStat.isFile()? videoURLs.previewImage : null
     }
   })
   return mapedPaths

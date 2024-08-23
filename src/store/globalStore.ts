@@ -19,7 +19,9 @@ const useGlobalStore = defineStore("global", () => {
         }).join("\\")
     })
 
-
+    const videosOnCurrentFolder = computed(()=>{
+        return filesOnCurrentLocalPath.value.filter(f => !f.isDirectory)
+    })
 
 
 
@@ -59,7 +61,8 @@ const useGlobalStore = defineStore("global", () => {
         filesOnCurrentLocalPath,
         currentPath,
         returnToPath,
-        currentVideoInfo
+        currentVideoInfo,
+        videosOnCurrentFolder
 
     }
 })

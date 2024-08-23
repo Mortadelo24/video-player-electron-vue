@@ -17,14 +17,15 @@ const video = ref<HTMLVideoElement | undefined>()
 const isVideoReady = ref(false)
 
 onMounted(() => {
-  if (video.value ) {
-    video.value.addEventListener("loadedmetadata", () => {
-      video.value.muted = true
-      video.value.currentTime = 3
-      isVideoReady.value = true
+  // Todo: improve performance when using this mathod to show a preview
+  // if (video.value ) {
+  //   video.value.addEventListener("loadedmetadata", () => {
+  //     video.value.muted = true
+  //     video.value.currentTime = 3
+  //     isVideoReady.value = true
       
-    })
-  }
+  //   })
+  // }
 })
 </script>
 <template>
