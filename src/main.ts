@@ -32,6 +32,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    autoHideMenuBar:  true, 
     // maxWidth:1024,
 
     webPreferences: {
@@ -59,13 +60,7 @@ const createWindow = () => {
   httpServer.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
   });
-  httpServer.get('/previewImage/:videoPath', async (req, res) => {
-    const videoPath = Buffer.from(req.params.videoPath, "base64").toString("utf8")
 
-    if (!isFileInAllowedFolders(videoPath)) {
-      return res.status(403).json({ message: 'Acces denied' });
-    }
-  })
   httpServer.get('/video/:videoPath', (req, res) => {
     const videoPath = Buffer.from(req.params.videoPath, "base64").toString("utf8")
     const stat = fs.statSync(videoPath)
@@ -105,7 +100,6 @@ const createWindow = () => {
         'Content-Type': 'video/mp4'
 
       });
-
       const stream = fs.createReadStream(videoPath, { start, end });
       stream.pipe(res);
     }

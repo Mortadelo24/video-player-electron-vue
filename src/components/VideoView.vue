@@ -56,7 +56,7 @@ const getPreviousVideo = () => {
 
 
             <div v-for="file in globalStore.videosOnCurrentFolder" @click="currentVideoInfo = file"
-                :class="{ 'bg-gray-400': file == currentVideoInfo }"
+                :class="{ 'bg-gray-400': file == currentVideoInfo }" :key="file.uuid+'vd'"
                 class="flex  flex-nowrap h-24 w-full mb-1.5 p-1.5 gap-2 rounded-lg cursor-pointer hover:shadow-md	">
                 <video class="rounded-lg shadow-lg aspect-video" :src="file.videoURL"></video>
                 <p class="truncate max-h-full	text-wrap 	"> {{ file.name }}</p>

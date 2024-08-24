@@ -93,7 +93,6 @@ ipcMain.handle('getter:getFolderContent', (event, path?: string) => {
       path: isRootFolder? pathItem: null,
       uuid: randomUUID(),
       videoURL: elementStat.isFile()? videoURLs.videoURL : null,
-      previewImage: elementStat.isFile()? videoURLs.previewImage : null
     }
   })
   return mapedPaths

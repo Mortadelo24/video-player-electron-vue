@@ -4,7 +4,6 @@ export interface FileInfo {
     path: string | null,
     uuid: string,
     videoURL: string | null,
-    previewImage: string | null
 }
 
 export interface IpcService {

@@ -14,25 +14,14 @@ const icons = {
 const title = ref(props.title || "No Title")
 const imgSrc = ref(props.imgSrc || icons.directory)
 const video = ref<HTMLVideoElement | undefined>()
-const isVideoReady = ref(false)
-
-onMounted(() => {
-  // Todo: improve performance when using this mathod to show a preview
-  // if (video.value ) {
-  //   video.value.addEventListener("loadedmetadata", () => {
-  //     video.value.muted = true
-  //     video.value.currentTime = 3
-  //     isVideoReady.value = true
-      
-  //   })
-  // }
-})
 </script>
 <template>
 
   <div class="rounded-lg cursor-pointer flex flex-col p-2		w-full  gap-2 hover:shadow-md">
     <div class="aspect-[16/9] ">
-      <video v-if="props.videoURL" ref="video" class="rounded-lg object-fill" :src="props.videoURL"></video>
+      <video v-if="props.videoURL" ref="video" class="rounded-lg object-fill" @canplay="video.currentTime = 3" >
+        <source :src="props.videoURL" type="video/mp4">
+      </video>
       <img v-else class="rounded-lg object-fill w-full" :src="imgSrc" :alt="imgSrc" draggable="false">
 
     </div>
