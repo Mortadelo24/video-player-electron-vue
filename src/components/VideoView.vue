@@ -38,12 +38,12 @@ const getPreviousVideo = () => {
             <div class=" flex gap-2">
                 <button @click="goBack()" :class="buttonStyle">Back
                     to FileExplorer</button>
-                <button v-show="globalStore.videosOnCurrentFolder[0] !== currentVideoInfo" :class="buttonStyle"
+                <button  :disabled="globalStore.videosOnCurrentFolder[0] == currentVideoInfo"  :class="buttonStyle"
                     @click="currentVideoInfo = getPreviousVideo()">
                     Previous
                 </button>
-                <button
-                    v-show="globalStore.videosOnCurrentFolder[globalStore.videosOnCurrentFolder.length - 1] !== currentVideoInfo"
+                <button  
+                    :disabled="globalStore.videosOnCurrentFolder[globalStore.videosOnCurrentFolder.length - 1] == currentVideoInfo"
                     :class="buttonStyle" @click="currentVideoInfo = getNextVideo()">
                     Next
                 </button>
